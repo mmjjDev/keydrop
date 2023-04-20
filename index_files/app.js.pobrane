@@ -1,0 +1,173 @@
+var formatNumber=(value,precision)=>new Intl.NumberFormat(document.documentElement.lang,{minimumFractionDigits:precision,maximumFractionDigits:precision,}).format(value)
+var formatCurrency=(value,currency)=>new Intl.NumberFormat(document.documentElement.lang,{style:'currency',currency:currency||window.__userInitialData.currency,}).format(value).replace('zł','PLN')
+var animateNumber=({element,valueFrom,valueTo,format,duration=500,easing=function easeOutExpo(x){return x===1?1:1-Math.pow(2,-10*x)},})=>{let startTimestamp=null
+const render=(timestamp)=>{if(!startTimestamp){startTimestamp=timestamp}
+const progress=easing(Math.min((timestamp-startTimestamp)/duration,1))
+const currentValue=progress*(valueTo-valueFrom)+valueFrom
+element.textContent=format(currentValue)
+if(progress>=1)return
+requestAnimationFrame(render)}
+requestAnimationFrame(render)}
+var animateInt=(element,valueTo)=>{const valueFrom=Math.max(0,parseFloat(element.dataset.value))
+element.dataset.value=valueTo
+animateNumber({element,valueFrom,valueTo,format:(value)=>formatNumber(value,0),})}
+var animateCurrency=(element,valueTo)=>{const valueFrom=Math.max(0,parseFloat(element.dataset.value))
+element.dataset.value=valueTo
+animateNumber({element,valueFrom,valueTo,format:formatCurrency,})}
+var updateGlobalCoinBalance=function(value){Array.from(document.querySelectorAll('.saldo_coins'),(el)=>animateInt(el,value))}
+var fetchAndUpdateCoinBalance=function(){fetch(SITE_URL+'Event/Event/balance/').then((r)=>r.json()).then((r)=>updateGlobalCoinBalance(r.coin))}
+function zamien_bg_na_casse($bg){if($bg==1)return 'text-1'
+if($bg==2)return 'text-2'
+if($bg==3)return 'text-3'
+if($bg==4)return 'text-4'
+if($bg==5)return 'text-5'
+if($bg==6)return 'text-6'}
+function zamien_bg_to_hex($bg){if($bg==1)return '#7c95ad'
+if($bg==2)return '#5370e6'
+if($bg==3)return '#df5dee'
+if($bg==4)return '#a41aff'
+if($bg==5)return '#ff445d'
+if($bg==6)return '#dcae64'}
+function bg_skins($bg){$bg=parseInt($bg)
+if($bg==1)return '#b0c3d9'
+if($bg==2)return '#5e98d9'
+if($bg==3)return '#4b69ff'
+if($bg==4)return '#8847ff'
+if($bg==5)return '#d32ce6'
+if($bg==6)return '#eb4b4b'
+if($bg==7)return '#e4ae39'}
+function escapeHtml(text){var map={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;',}
+return text.replace(/[&<>"']/g,function(m){return map[m]})}
+function roundNumber(num,scale){if(!(''+num).includes('e')){return+(Math.round(num+'e+'+scale)+'e-'+scale)}else{var arr=(''+num).split('e')
+var sig=''
+if(+arr[1]+scale>0){sig='+'}
+return+(Math.round(+arr[0]+'e'+sig+(+arr[1]+scale))+'e-'+scale)}}
+function updateBalanceNumbers(data){Array.from(document.querySelectorAll('.saldo_punkty'),(el)=>animateCurrency(el,data.pkt))
+Array.from(document.querySelectorAll('.saldo_gold'),(el)=>animateInt(el,data.gold))}
+function balance(){if(LOGIN==1){$.get(SITE_URL+'balance',function(data){if(data==0){return}else{var obj=typeof data==='string'?JSON.parse(data):data
+updateBalanceNumbers(obj)}})}}
+$('#search').keydown(function(){var $val=$(this).val()
+var $ilosc=$val.length
+if($ilosc>2){var $csrf=$('#csrfToken').val()
+$.post(SITE_URL+'/Api/search',{s:$val,csrf_token:$csrf}).done(function(obj){$('#csrfToken').val(obj.csrf)
+$('.search-results').html('')
+$(obj.data).each(function(index,element){if(element.Type=='Game'){$('.search-results').append('<a href="'+
+element.Url+
+'"><li class="flex items-center p-5 hover:bg-navy-600">              <img src="'+
+BASEURL+
+element.Image+
+'" alt="" class="w-24 h-12 rounded-lg object-contain light-skin"><p class="mx-3 font-thin text-base text-white uppercase">'+
+element.Name+
+'<br><span class="in_case">'+
+lang_title[37]+
+' </span> <span class="name_case">'+
+element.Case_name+
+'</span></p></li></a>')}
+if(element.Type=='Case'){$('.search-results').append('<a href="'+
+element.Url+
+'"><li class="flex items-center p-5 hover:bg-navy-600"> <img src="'+
+BASEURL+
+element.Mini_image+
+'" alt="" class="w-24 h-12 rounded-lg object-contain light-skin"><p class="mx-3 font-thin text-base text-white uppercase">'+
+element.Name+
+'</p></li></a>')}
+if(element.Type=='Skins'){$('.search-results').append('<a href="'+
+element.Url+
+'"><li class="flex items-center p-5 hover:bg-navy-600">              <img src="'+
+element.Image+
+'" alt="" class="w-24 h-12 rounded-lg object-contain light-skin"><p class="mx-3 font-thin text-base text-white uppercase">'+
+element.Name+
+'<br><span class="in_case">'+
+lang_title[37]+
+' </span> <span class="name_case">'+
+element.Case_name+
+'</span></p></li></a>')}
+if(element.Type=='SkinProduct'){$('.search-results').append('<a href="'+
+element.Url+
+'"><li class="flex items-center p-5 hover:bg-navy-600">              <img src="'+
+element.Image+
+'" alt="" class="w-24 h-12 rounded-lg object-contain light-skin"><p class="mx-3 font-thin text-base text-white uppercase">'+
+element.Name+
+'<br><span class="in_case">'+
+lang_title[38]+
+'</span>'+
+'</p></li></a>')}})})}})
+$('body').on('click','.activate-modal',function(){var $type=$(this).data('type')
+var $img=$(this).data('img')
+var $tutorial=$(this).data('tutorial')
+$('body').find('#activation-guide-modal').find('#load_tutorial').load(SITE_URL+'panel/profil/tutorial/'+$tutorial)
+$('#activation-guide-modal').find('.img-src').attr('src',$img)
+MicroModal.show('activation-guide-modal')})
+function open_modal($id_modal){MicroModal.show($id_modal)}
+$('.giveaway-m').click(function(){var gab_title=$(this).find('.gab__title').html()
+var type=$(this).data('type')
+var img=$(this).data('img')
+var title=$(this).data('title')
+var sposob=$(this).data('sposob')
+var hash=$(this).data('hash')
+var id=$(this).data('id')
+var dolaczenie=$(this).data('dolaczenie')
+$('#giveaway-modal').find('.gab__title').html(gab_title)
+if(dolaczenie==0){$('#giveaway-modal').find('.step-2').html('<a href="#dolacz" class="btn btn--solid py-2 font-body text-2xs" onclick="dolacz_g('+
+id+
+')">'+
+lang_title[9]+
+'</a>')}else{$('#giveaway-modal').find('.step-2').html(lang_title[10])}
+$('#giveaway-modal').find('.gab__img').attr('src',img)
+$('#giveaway-modal').find('.gab__name').html(title)
+$('#giveaway-modal').find('.step-1').html(sposob)
+$('#giveaway-modal').find('.hash').html(hash)
+$('#giveaway-modal').find('.gam__header-price').html('#'+id)
+$('#giveaway-modal').find('header').removeClass('gab--01').removeClass('gab--02').removeClass('gab--03').removeClass('gab--04')
+$('#giveaway-modal').find('.gab__progress').hide()
+$('#giveaway-modal').find('.gab__text strong').hide()
+if(type=='1'){$('#giveaway-modal').find('.js-hourly-giveaway-counter').show()
+$('#giveaway-modal').find('.js-hourly-giveaway-progress').show()
+$('#giveaway-modal').find('header').addClass('gab--01')}
+if(type=='2'){$('#giveaway-modal').find('.js-daily-giveaway-counter').show()
+$('#giveaway-modal').find('.js-daily-giveaway-progress').show()
+$('#giveaway-modal').find('header').addClass('gab--02')}
+if(type=='3'){$('#giveaway-modal').find('.js-weekly-giveaway-counter').show()
+$('#giveaway-modal').find('.js-weekly-giveaway-progress').show()
+$('#giveaway-modal').find('header').addClass('gab--03')}
+if(type=='4'){$('#giveaway-modal').find('.js-monthly-giveaway-counter').show()
+$('#giveaway-modal').find('.js-monthly-giveaway-progress').show()
+$('#giveaway-modal').find('header').addClass('gab--04')}
+var grupa=type
+$.get(SITE_URL+'Giveaway/last_winner/'+grupa,function(data){$('#giveaway-modal').find('.gaw__table').find('tbody').html('')
+var obj=jQuery.parseJSON(data)
+$(obj).each(function(index,element){$('#giveaway-modal').find('.gaw__table').find('tbody').append('<tr><td><div class="text-white">'+
+lang_title[25]+
+'</div><div class="text-red">'+
+element.Wartosc+
+'</div></td><td><img src="'+
+element.Img+
+'" alt="" class="gaw__award-img"></td><td><div class="text-white">'+
+element.Name+
+'</div><div class="gaw__date">'+
+element.Data_zakonczenia+
+'</div></td><td><a href="'+
+SITE_URL+
+'user/profile/'+
+element.SteamID+
+'" target="_blank"><div class="gaw__flex gaw__user"><img src="'+
+element.Avatar+
+'" alt="" class="gaw__avatar mr-2">'+
+escapeHtml(element.Username)+
+'</div></a></td></tr>')})})
+MicroModal.show('giveaway-modal')})
+function dolacz_g(id){$.post(SITE_URL+'/Giveaway/add',{giveaway:id},function(data){var obj=jQuery.parseJSON(data)
+if(obj.Status==1){new Toast({type:'success',title:lang_title[21],message:obj.Info,duration:6000,})}else{new Toast({type:'failure',title:lang_title[20],message:obj.Info,duration:6000,})}})}
+$('body').on('submit','#cashbill_open',function(e){e.preventDefault()
+payButton.loading()
+var val=parseFloat($('#final-amount').val())
+if(val<3){new Toast({type:'failure',title:lang_title[20],message:lang_title[14]+' 3zł',duration:6000,})
+$('.doladuj-btn').html(lang_title[15])
+return false}else{$.post(SITE_URL+'Payment/cashbill_open',{Kwota:val},function(data){if(data==0){$('.doladuj-btn').html(lang_title[15])
+new Toast({type:'failure',title:lang_title[20],message:lang_title[16],duration:6000,})
+return false}else{location.href=data}})}})
+function reportGeoData(){$.ajax({url:SITE_URL+'Api/geoStat'})}
+function getGeo(){if(localStorage.lastGeoCheck){var interfal=1000*60*60*24
+if(Date.now()-+localStorage.lastGeoCheck>=interfal){reportGeoData()
+localStorage.lastGeoCheck=Date.now()}}else{reportGeoData()
+localStorage.lastGeoCheck=Date.now()}}
